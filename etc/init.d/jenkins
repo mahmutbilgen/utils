@@ -1,0 +1,37 @@
+#! /bin/bash
+#
+# jenkins       Bring up/down jenkins docker image
+
+# Source function library.
+#. /etc/init.d/functions
+
+[ -x /bin/docker ] && DOCKER=/bin/docker || exit 1
+
+CWD=$(pwd)
+case "$1" in
+start)
+       JENKINS_CONTAINER_ID=$(docker ps -a | grep jenkins | cut -f1 -d\ )
+       if [ ! -z "$JENKINS_CONTAINER_ID" ] ;then
+          eval "$DOCKER" start "$JENKINS_CONTAINER_ID"
+       else    
+           echo "WARN: No Jenkins Container ID"
+       fi 
+;;
+
+stop)
+       JENKINS_CONTAINER_ID=$(docker ps  | grep jenkins | cut -f1 -d\ )
+       if [ ! -z "$JENKINS_CONTAINER_ID" ] ;then
+          eval "$DOCKER" stop "$JENKINS_CONTAINER_ID"
+       else    
+           echo "WARN: No RUNNING Jenkins Container"
+       fi 
+;;
+status)
+     eval "$DOCKER"  ps -a | grep jenkins
+;;
+*)
+     echo "INFO: Usage : $0 stop|start|status"
+     exit 1
+;;
+esac
+
